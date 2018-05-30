@@ -1,88 +1,75 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package br.com.atendemeupet.dao;
-
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 
 import br.com.atendemeupet.entidades.Pet;
 import br.com.atendemeupet.entidades.Usuario;
-import br.com.atendemeupet.util.JpaUtil;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
+/**
+ *
+ * @author Rafael Vieira
+ */
+@Getter
+@Setter
+@AllArgsConstructor
 public class PetDAO {
 
-	public void inserirPet(Pet pet) {
+    private EntityManager em;
 
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+    public void inserirPet(Pet pet) {
+        em.getTransaction().begin();
+        em.persist(pet);
+        em.getTransaction().commit();
+    }
 
-		em.getTransaction().begin();
-		em.persist(pet);
-		em.getTransaction().commit();
-		em.close();
+    public void atualizarPet(Pet pet) {
+        em.getTransaction().begin();
+        em.merge(pet);
+        em.getTransaction().commit();
+    }
 
-	}
+    public Pet removerPet(Pet pet) {
+        em.getTransaction().begin();
+        em.remove(pet);
+        em.getTransaction().commit();
+        return pet;
+    }
 
-	public Pet removerPet(Pet pet) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+    public List<Pet> listarPets(){
+        Query query = em.createNamedQuery("ListarTodosOsPets");
+        
+        List<Pet> pets = query.getResultList();
+        
+        return pets;
+    }
+    
+    public List<Pet> listarPets(String nome){
+        Query query = em.createNamedQuery("ListarPetNome");
+        
+        query.setParameter("pNome", nome);
+        
+        List<Pet> pets = query.getResultList();
+        
+        return pets;
+    }
+    
+    public List<Pet> listarPets(Usuario usuario){
+        Query query = em.createNamedQuery("ListarTodosOsPetsDoUsuario");
+        
+        query.setParameter("pUsuario", usuario);
+        
+        List<Pet> pets = query.getResultList();
+        
+        return pets;
+    }
 
-		em.getTransaction().begin();
-		em.remove(em.merge(pet));
-		em.getTransaction().commit();
-		em.close();
-
-		return pet;
-	}
-
-	public void atualizarPet(Pet pet) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
-
-		em.getTransaction().begin();
-		em.merge(pet);
-		em.getTransaction().commit();
-		em.close();
-
-	}
-
-	public List<Pet> listarPets() {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
-
-		Query query = em.createNamedQuery("ListarTodosOsPets");
-
-		@SuppressWarnings("unchecked")
-		List<Pet> pets = query.getResultList();
-
-		em.close();
-
-		return pets;
-	}
-
-	public List<Pet> listarPets(Usuario usr) {
-
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
-
-		Query query = em.createNamedQuery("ListarTodosOsPetsDoUsuario");
-
-		query.setParameter("pUsuario", usr);
-
-		@SuppressWarnings("unchecked")
-		List<Pet> pets = query.getResultList();
-
-		em.close();
-		return pets;
-	}
-
-	public List<Pet> listarPets(String nome) {
-
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
-
-		Query query = em.createNamedQuery("ListarPetNome");
-
-		query.setParameter("pNome", nome);
-
-		@SuppressWarnings("unchecked")
-		List<Pet> pets = query.getResultList();
-
-		em.close();
-		return pets;
-	}
 }

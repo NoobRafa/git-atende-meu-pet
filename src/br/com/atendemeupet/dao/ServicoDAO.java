@@ -1,117 +1,107 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package br.com.atendemeupet.dao;
 
+import br.com.atendemeupet.entidades.Loja;
+import br.com.atendemeupet.entidades.Reserva;
+import br.com.atendemeupet.entidades.Servico;
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-import br.com.atendemeupet.entidades.Servico;
-import br.com.atendemeupet.util.JpaUtil;
-
+/**
+ *
+ * @author Rafael Vieira
+ */
+@Getter
+@Setter
+@AllArgsConstructor
 public class ServicoDAO {
-	public void inserirServico(Servico servico) {
 
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+    private EntityManager em;
 
-		em.getTransaction().begin();
-		em.persist(servico);
-		em.getTransaction().commit();
-		em.close();
+    public void inserirServico(Servico servico) {
+        em.getTransaction().begin();
+        em.persist(servico);
+        em.getTransaction().commit();
+    }
 
-	}
+    public void atualizarServico(Servico servico) {
+        em.getTransaction().begin();
+        em.merge(servico);
+        em.getTransaction().commit();
+    }
 
-	public Servico removerServico(Servico servico) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+    public Servico removerServico(Servico servico) {
+        em.getTransaction().begin();
+        em.remove(servico);
+        em.getTransaction().commit();
+        return servico;
+    }
 
-		em.getTransaction().begin();
-		em.remove(em.merge(servico));
-		em.getTransaction().commit();
-		em.close();
+    public List<Servico> listarServicos() {
+        Query query = em.createNamedQuery("ListarTodosServicos");
 
-		return servico;
-	}
+        List<Servico> servicos = query.getResultList();
 
-	public void atualizarServico(Servico servico) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+        return servicos;
+    }
+    
+     public List<Servico> listarServicosLojas() {
+        Query query = em.createNamedQuery("ListarServicosLojaGeral");
 
-		em.getTransaction().begin();
-		em.merge(servico);
-		em.getTransaction().commit();
-		em.close();
+        List<Servico> servicos = query.getResultList();
 
-	}
+        return servicos;
+    }
+    
+    public List<Servico> listarServicos(int id) {
+        Query query = em.createNamedQuery("ListarServicosId");
+        
+        query.setParameter("pId", id);
 
-	public List<Servico> listarServicos() {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+        List<Servico> servicos = query.getResultList();
 
-		Query query = em.createNamedQuery("ListarTodosOsServicos");
+        return servicos;
+    }
+    
+    
+    
+    public List<Servico> listarServicos(String tipo) {
+        Query query = em.createNamedQuery("ListarServicosTipo");
+        
+        query.setParameter("pTipo", tipo);
 
-		@SuppressWarnings("unchecked")
-		List<Servico> servicos = query.getResultList();
-		em.close();
-		return servicos;
-	}
+        List<Servico> servicos = query.getResultList();
 
-	public List<Servico> listarTodosOsServicosLojas() {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+        return servicos;
+    }
+    
+    public List<Servico> listarServicos(Loja loja) {
+        Query query = em.createNamedQuery("ListarServicosLoja");
+        
+        query.setParameter("pLoja", loja);
 
-		Query query = em.createNamedQuery("ListarTodosOsServicosLojas");
+        List<Servico> servicos = query.getResultList();
 
-		@SuppressWarnings("unchecked")
-		List<Servico> servicos = query.getResultList();
-		em.close();
-		return servicos;
-	}
+        return servicos;
+    }
+    
+      public List<Servico> listarServicos(Reserva reserva) {
+        Query query = em.createNamedQuery("ListarServicosReserva");
+        
+        query.setParameter("pReserva", reserva);
 
-	public List<Servico> listarServicos(String tipo) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+        List<Servico> servicos = query.getResultList();
 
-		Query query = em.createNamedQuery("ListarServicoTipo");
-		query.setParameter("pTipo", tipo);
+        return servicos;
+    }
 
-		@SuppressWarnings("unchecked")
-		List<Servico> servicos = query.getResultList();
-
-		em.close();
-
-		return servicos;
-	}
-
-	public List<Servico> listarServicos(int id) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
-
-		Query query = em.createNamedQuery("ListarServicoId");
-		query.setParameter("pId", id);
-
-		@SuppressWarnings("unchecked")
-		List<Servico> servicos = query.getResultList();
-		
-		em.close();
-		return servicos;
-	}
-
-	public List<Servico> listarServicosReservas() {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
-
-		Query query = em.createNamedQuery("ListarServicosReservas");
-
-		@SuppressWarnings("unchecked")
-		List<Servico> servicos = query.getResultList();
-		em.close();
-		return servicos;
-	}
-
-	public List<Servico> listarTipoServicoReservas(String tipo) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
-
-		Query query = em.createNamedQuery("ListarTipoServicoReservas");
-
-		query.setParameter("pTipo", tipo);
-
-		@SuppressWarnings("unchecked")
-		List<Servico> servicos = query.getResultList();
-		em.close();
-		return servicos;
-	}
 
 }

@@ -1,150 +1,104 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package br.com.atendemeupet.dao;
 
+import br.com.atendemeupet.entidades.Loja;
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-import br.com.atendemeupet.entidades.Loja;
-import br.com.atendemeupet.entidades.Usuario;
-import br.com.atendemeupet.util.JpaUtil;
-
+/**
+ *
+ * @author Rafael Vieira
+ */
+@Getter
+@Setter
+@AllArgsConstructor
 public class LojaDAO {
-	public void inserirLoja(Loja loja) {
 
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+    private EntityManager em;
 
-		em.getTransaction().begin();
-		em.persist(loja);
-		em.getTransaction().commit();
-		em.close();
+    public void inserirLoja(Loja loja) {
+        em.getTransaction().begin();
+        em.persist(loja);
+        em.getTransaction().commit();
+    }
 
-	}
+    public void atualizarLoja(Loja loja) {
+        em.getTransaction().begin();
+        em.merge(loja);
+        em.getTransaction().commit();
+    }
 
-	public Loja removerLoja(Loja loja) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+    public Loja removerLoja(Loja loja) {
+        em.getTransaction().begin();
+        em.remove(loja);
+        em.getTransaction().commit();
+        return loja;
+    }
 
-		em.getTransaction().begin();
-		em.remove(em.merge(loja));
-		em.getTransaction().commit();
-		em.close();
+    public List<Loja> listarLojas() {
+        Query query = em.createNamedQuery("ListarTodasAsLojas");
 
-		return loja;
-	}
+        List<Loja> lojas = query.getResultList();
 
-	public void atualizarLoja(Loja loja) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+        return lojas;
+    }
 
-		em.getTransaction().begin();
-		em.merge(loja);
-		em.getTransaction().commit();
-		em.close();
+    public List<Loja> listarLojas(int id) {
+        Query query = em.createNamedQuery("ListarLojaId");
 
-	}
+        query.setParameter("pId", id);
 
-	public List<Loja> listarLojas() {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+        List<Loja> lojas = query.getResultList();
 
-		Query query = em.createNamedQuery("ListarTodasAsLojas");
+        return lojas;
+    }
 
-		@SuppressWarnings("unchecked")
-		List<Loja> lojas = query.getResultList();
-		em.close();
-		return lojas;
-	}
+    public List<Loja> listarLojas(String razaoSocial) {
+        Query query = em.createNamedQuery("ListarLojaRazaoSocial");
 
-	public List<Loja> listarLojas(Usuario usr) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+        query.setParameter("pRazaoSocial", razaoSocial);
 
-		Query query = em.createNamedQuery("ListarLojaUsuario");
+        List<Loja> lojas = query.getResultList();
 
-		query.setParameter("pUsuario", usr);
+        return lojas;
+    }
 
-		@SuppressWarnings("unchecked")
-		List<Loja> lojas = query.getResultList();
-		em.close();
-		return lojas;
-	}
+    public List<Loja> listarLojasReservas() {
 
-	public List<Loja> listarLojas(String nome) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+        Query query = em.createNamedQuery("ListarLojasReservas");
 
-		Query query = em.createNamedQuery("ListarLojaNome");
+        List<Loja> lojas = query.getResultList();
 
-		query.setParameter("pNome", nome);
+        return lojas;
 
-		@SuppressWarnings("unchecked")
-		List<Loja> lojas = query.getResultList();
-		em.close();
-		return lojas;
-	}
+    }
+    
+    public List<Loja> listarLojasServicos() {
 
-	public List<Loja> listarLojas(int id) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+        Query query = em.createNamedQuery("ListarLojasServicos");
 
-		Query query = em.createNamedQuery("ListarLojaId");
+        List<Loja> lojas = query.getResultList();
 
-		query.setParameter("pId", id);
+        return lojas;
 
-		@SuppressWarnings("unchecked")
-		List<Loja> lojas = query.getResultList();
-		em.close();
-		return lojas;
-	}
+    }
+    
+    public List<Loja> listarLojaPeloServico(String tipo){
+         Query query = em.createNamedQuery("ListarLojaPeloServico");
 
-	public List<Loja> listarLojasServicos() {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+        query.setParameter("pTipo", tipo);
 
-		Query query = em.createNamedQuery("ListarLojasServicos");
+        List<Loja> lojas = query.getResultList();
 
-		@SuppressWarnings("unchecked")
-		List<Loja> lojas = query.getResultList();
-		em.close();
-		return lojas;
-	}
-
-	public List<Loja> listarLojasUsuario() {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
-		Query query = em.createNamedQuery("ListarLojasUsuario");
-		@SuppressWarnings("unchecked")
-		List<Loja> lojas = query.getResultList();
-		em.close();
-		return lojas;
-	}
-	
-	public List<Loja> listarLojaReservas(int id) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
-
-		Query query = em.createNamedQuery("ListarLojaIdReservas");
-
-		query.setParameter("pId", id);
-
-		@SuppressWarnings("unchecked")
-		List<Loja> lojas = query.getResultList();
-		em.close();
-		return lojas;
-	}
-	
-	public List<Loja> listarLojaReservas(String nome) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
-
-		Query query = em.createNamedQuery("ListarLojaNomeReservas");
-
-		query.setParameter("pNome", nome);
-
-		@SuppressWarnings("unchecked")
-		List<Loja> lojas = query.getResultList();
-		em.close();
-		return lojas;
-	}
-	
-	public List<Loja> listarLojasReservas() {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
-		Query query = em.createNamedQuery("ListarLojasReservas");
-		@SuppressWarnings("unchecked")
-		List<Loja> lojas = query.getResultList();
-		em.close();
-		return lojas;
-	}
+        return lojas;
+    }
 
 }

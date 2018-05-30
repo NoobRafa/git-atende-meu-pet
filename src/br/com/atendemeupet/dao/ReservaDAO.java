@@ -1,105 +1,86 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package br.com.atendemeupet.dao;
-
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 
 import br.com.atendemeupet.entidades.Loja;
 import br.com.atendemeupet.entidades.Reserva;
 import br.com.atendemeupet.entidades.Usuario;
-import br.com.atendemeupet.util.JpaUtil;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
+/**
+ *
+ * @author Rafael Vieira
+ */
+@Getter
+@Setter
+@AllArgsConstructor
 public class ReservaDAO {
 
-	public void inserirReserva(Reserva reserva) {
+    private EntityManager em;
 
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+    public void inserirReserva(Reserva reserva) {
+        em.getTransaction().begin();
+        em.persist(reserva);
+        em.getTransaction().commit();
+    }
 
-		em.getTransaction().begin();
-		em.persist(reserva);
-		em.getTransaction().commit();
-		em.close();
+    public void atualizarReserva(Reserva reserva) {
+        em.getTransaction().begin();
+        em.merge(reserva);
+        em.getTransaction().commit();
+    }
 
-	}
+    public Reserva removerReserva(Reserva reserva) {
+        em.getTransaction().begin();
+        em.remove(reserva);
+        em.getTransaction().commit();
+        return reserva;
+    }
 
-	public Reserva removerReserva(Reserva reserva) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+    public List<Reserva> listarReservas() {
+        Query query = em.createNamedQuery("ListarTodasAsReservas");
 
-		em.getTransaction().begin();
-		em.remove(em.merge(reserva));
-		em.getTransaction().commit();
-		em.close();
+        List<Reserva> reservas = query.getResultList();
 
-		return reserva;
-	}
+        return reservas;
+    }
 
-	public void atualizarReserva(Reserva reserva) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+    public List<Reserva> listarReservas(int id) {
+        Query query = em.createNamedQuery("ListarReservaId");
 
-		em.getTransaction().begin();
-		em.merge(reserva);
-		em.getTransaction().commit();
-		em.close();
+        query.setParameter("pId", id);
 
-	}
+        List<Reserva> reservas = query.getResultList();
 
-	public List<Reserva> listarReservas() {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+        return reservas;
+    }
 
-		Query query = em.createNamedQuery("ListarTodasAsReservas");
+    public List<Reserva> listarReservas(Loja loja) {
+        Query query = em.createNamedQuery("ListarReservasLoja");
 
-		@SuppressWarnings("unchecked")
-		List<Reserva> reservas = query.getResultList();
+        query.setParameter("pLoja", loja);
 
-		em.close();
+        List<Reserva> reservas = query.getResultList();
 
-		return reservas;
-	}
+        return reservas;
+    }
 
-	public List<Reserva> listarReservas(int id) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+    public List<Reserva> listarReservas(Usuario usuario) {
+        Query query = em.createNamedQuery("ListarReservasUsuario");
 
-		Query query = em.createNamedQuery("ListarReservaId");
+        query.setParameter("pUsuario", usuario);
 
-		query.setParameter("pId", id);
+        List<Reserva> reservas = query.getResultList();
 
-		@SuppressWarnings("unchecked")
-		List<Reserva> reservas = query.getResultList();
-
-		em.close();
-
-		return reservas;
-	}
-
-	public List<Reserva> listarReservas(Loja loja) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
-
-		Query query = em.createNamedQuery("ListarReservasLoja");
-
-		query.setParameter("pLoja", loja);
-
-		@SuppressWarnings("unchecked")
-		List<Reserva> reservas = query.getResultList();
-
-		em.close();
-
-		return reservas;
-	}
-
-	public List<Reserva> listarReservas(Usuario usr) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
-
-		Query query = em.createNamedQuery("ListarReservasUsuario");
-
-		query.setParameter("pUsuario", usr);
-
-		@SuppressWarnings("unchecked")
-		List<Reserva> reservas = query.getResultList();
-
-		em.close();
-
-		return reservas;
-	}
+        return reservas;
+    }
 
 }

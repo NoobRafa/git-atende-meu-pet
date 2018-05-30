@@ -1,151 +1,137 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package br.com.atendemeupet.dao;
 
+import br.com.atendemeupet.entidades.Usuario;
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-import br.com.atendemeupet.entidades.Usuario;
-import br.com.atendemeupet.util.JpaUtil;
-
+/**
+ *
+ * @author Rafael Vieira
+ */
+@Getter
+@Setter
+@AllArgsConstructor
 public class UsuarioDAO {
 
-	public void inserirUsuario(Usuario usr) {
+    private EntityManager em;
 
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+    public void inserirUsuario(Usuario usuario) {
+        em.getTransaction().begin();
+        em.persist(usuario);
+        em.getTransaction().commit();
+    }
 
-		em.getTransaction().begin();
-		em.persist(usr);
-		em.getTransaction().commit();
-		em.close();
+    public void atualizarUsuario(Usuario usuario) {
+        em.getTransaction().begin();
+        em.merge(usuario);
+        em.getTransaction().commit();
+    }
 
-	}
+    public Usuario removerUsuario(Usuario usuario) {
+        em.getTransaction().begin();
+        em.remove(usuario);
+        em.getTransaction().commit();
+        return usuario;
+    }
 
-	public Usuario removerUsuario(Usuario usr) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+    public List<Usuario> listarUsuarios() {
 
-		em.getTransaction().begin();
-		em.remove(em.merge(usr));
-		em.getTransaction().commit();
-		em.close();
+        Query query = em.createNamedQuery("ListarTodosOsUsuarios");
 
-		return usr;
-	}
+        @SuppressWarnings("unchecked")
+        List<Usuario> usrs = query.getResultList();
+        return usrs;
+    }
 
-	public void atualizarUsuario(Usuario usr) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+    public List<Usuario> listarUsuarios(String nome) {
 
-		em.getTransaction().begin();
-		em.merge(usr);
-		em.getTransaction().commit();
-		em.close();
+        Query query = em.createNamedQuery("ListarUsuarioNome");
 
-	}
+        query.setParameter("pNome", nome);
 
-	public List<Usuario> listarUsuarios() {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+        @SuppressWarnings("unchecked")
+        List<Usuario> usrs = query.getResultList();
+        return usrs;
+    }
 
-		Query query = em.createNamedQuery("ListarTodosOsUsuarios");
+    public List<Usuario> listarUsuarios(int id) {
 
-		@SuppressWarnings("unchecked")
-		List<Usuario> usrs = query.getResultList();
-		em.close();
-		return usrs;
-	}
+        Query query = em.createNamedQuery("ListarUsuarioId");
 
-	public List<Usuario> listarUsuarios(String nome) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+        query.setParameter("pId", id);
 
-		Query query = em.createNamedQuery("ListarUsuarioNome");
-		query.setParameter("pNome", nome);
+        @SuppressWarnings("unchecked")
+        List<Usuario> usrs = query.getResultList();
+        return usrs;
+    }
 
-		@SuppressWarnings("unchecked")
-		List<Usuario> usrs = query.getResultList();
-		em.close();
-		return usrs;
-	}
+    public List<Usuario> listarUsuariosPets() {
 
-	public List<Usuario> listarUsuarios(int id) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+        Query query = em.createNamedQuery("ListarUsuariosPets");
 
-		Query query = em.createNamedQuery("ListarUsuarioId");
-		query.setParameter("pId", id);
+        @SuppressWarnings("unchecked")
+        List<Usuario> usrs = query.getResultList();
+        return usrs;
+    }
 
-		@SuppressWarnings("unchecked")
-		List<Usuario> usrs = query.getResultList();
-		em.close();
-		return usrs;
-	}
+    public List<Usuario> listarUsuarioPets(int id) {
 
-	public List<Usuario> listarUsuariosPets() {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+        Query query = em.createNamedQuery("ListarUsuarioIdPets");
+        query.setParameter("pId", id);
 
-		Query query = em.createNamedQuery("ListarUsuarioPets");
+        @SuppressWarnings("unchecked")
+        List<Usuario> usrs = query.getResultList();
+        return usrs;
+    }
+    
+    public List<Usuario> listarUsuarioPets(String nome) {
 
-		@SuppressWarnings("unchecked")
-		List<Usuario> usrs = query.getResultList();
-		em.close();
-		return usrs;
-	}
+        Query query = em.createNamedQuery("ListarUsuarioNomePets");
+        query.setParameter("pNome", nome);
 
-	public List<Usuario> listarUsuariosLojas() {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+        @SuppressWarnings("unchecked")
+        List<Usuario> usrs = query.getResultList();
+        return usrs;
+    }
 
-		Query query = em.createNamedQuery("ListarUsuariosLojas");
+    public List<Usuario> listarUsuariosReservas() {
 
-		@SuppressWarnings("unchecked")
-		List<Usuario> usrs = query.getResultList();
-		em.close();
-		return usrs;
-	}
+        Query query = em.createNamedQuery("ListarTodosUsuariosReservas");
 
-	public List<Usuario> listarUsuarioLojas(String nome) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+        @SuppressWarnings("unchecked")
+        List<Usuario> usrs = query.getResultList();
+        return usrs;
+    }
 
-		Query query = em.createNamedQuery("ListarUsuarioLojas");
+    public List<Usuario> listarUsuarioReservas(int id) {
 
-		query.setParameter("pNome", nome);
+        Query query = em.createNamedQuery("ListarUsuarioIdReservas");
 
-		@SuppressWarnings("unchecked")
-		List<Usuario> usrs = query.getResultList();
-		em.close();
-		return usrs;
-	}
+        query.setParameter("pId", id);
 
-	public List<Usuario> listarTodosUsuariosReservas() {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+        @SuppressWarnings("unchecked")
+        List<Usuario> usrs = query.getResultList();
+        return usrs;
+    }
 
-		Query query = em.createNamedQuery("ListarTodosUsuariosReservas");
+    public List<Usuario> listarUsuariosReservas(String nome) {
 
-		@SuppressWarnings("unchecked")
-		List<Usuario> usrs = query.getResultList();
-		em.close();
-		return usrs;
-	}
+        Query query = em.createNamedQuery("ListarUsuarioNomeReservas");
 
-	public List<Usuario> listarUsuarioIdReservas(int id) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
+        query.setParameter("pNome", nome);
 
-		Query query = em.createNamedQuery("ListarUsuarioIdReservas");
+        @SuppressWarnings("unchecked")
+        List<Usuario> usrs = query.getResultList();
+        return usrs;
+    }
 
-		query.setParameter("pId", id);
-
-		@SuppressWarnings("unchecked")
-		List<Usuario> usrs = query.getResultList();
-		em.close();
-		return usrs;
-	}
-
-	public List<Usuario> listarUsuarioNomeReservas(String nome) {
-		EntityManager em = JpaUtil.getFACTORY().createEntityManager();
-
-		Query query = em.createNamedQuery("ListarUsuarioNomeReservas");
-
-		query.setParameter("pNome", nome);
-
-		@SuppressWarnings("unchecked")
-		List<Usuario> usrs = query.getResultList();
-		em.close();
-		return usrs;
-	}
 }

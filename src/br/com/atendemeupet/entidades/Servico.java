@@ -1,94 +1,50 @@
 package br.com.atendemeupet.entidades;
 
-
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-
-
-@Entity
+@Getter @Setter
+@EqualsAndHashCode(of = "tipo")
+@NoArgsConstructor
+@ToString(exclude = {"reservas", "lojas"})
 @NamedQueries({
-	@NamedQuery(query = "select s from Servico s", 
-	name = "ListarTodosOsServicos"),
-	@NamedQuery(query = "select distinct s from Servico s left join fetch"
-			+ " s.lojas l where s.tipo like :pTipo", 
-	name = "ListarServicoTipo"),
-	@NamedQuery(query = "select distinct s from Servico s left join fetch"
-			+ " s.lojas l where s.id = :pId",
-	name = "ListarServicoId"),
-	@NamedQuery(query = "select distinct s from Servico s left join fetch"
-			+ " s.lojas l", 
-	name = "ListarTodosOsServicosLojas"),
-	@NamedQuery(query = "select distinct s from Servico s join fetch"
-			+ " s.reservas r ", name = "ListarServicosReservas"),
-	@NamedQuery(query = "select distinct s from Servico s join fetch"
-			+ " s.reservas r join fetch r.loja l join fetch r.pet "
-			+ "where s.tipo = :pTipo", name = "ListarTipoServicoReservas")
+    @NamedQuery(query = "select s from Servico s", name = "ListarTodosServicos"),
+    @NamedQuery(query = "select s from Servico s where s.tipo = :pTipo", name = "ListarServicosTipo"),
+    @NamedQuery(query = "select s from Servico s where s.id = :pId", name = "ListarServicosId"),
+    @NamedQuery(query = "select distinct s from Servico s join fetch s.lojas l where l = :pLoja", name = "ListarServicosLoja"),
+    @NamedQuery(query = "select distinct s from Servico s join fetch s.lojas", name = "ListarServicosLojaGeral"),
+    @NamedQuery(query = "select distinct s from Servico s join fetch s.reservas r where r = :pReserva", name = "ListarServicosReserva"),
 })
+@Entity
 public class Servico {
 
-	public Servico() {
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    private String tipo;
 
-	public Servico(String tipo) {
-		super();
-		this.tipo = tipo;
-	}
+    @ManyToMany(cascade = CascadeType.REMOVE, mappedBy = "servicos")
+    private List<Reserva> reservas;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
-	private String tipo;
-
-	@ManyToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, mappedBy = "servicos")
-	private List<Reserva> reservas;
-	
-	@ManyToMany(cascade = CascadeType.REMOVE,fetch = FetchType.LAZY, mappedBy = "servicos")
-	private List<Loja> lojas;
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getTipo() {
-		return tipo;
-	}
-
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
-	}
-
-	public List<Reserva> getReservas() {
-		return reservas;
-	}
-
-	public void setReservas(List<Reserva> reservas) {
-		this.reservas = reservas;
-	}
-
-	public List<Loja> getLojas() {
-		return lojas;
-	}
-
-	public void setLojas(List<Loja> lojas) {
-		this.lojas = lojas;
-	}
-
-	public String toString() {
-		return "ID(" + id + ") Serviço: " + tipo;
-	}
-
+    @JoinTable(name = "servicos_lojas")
+    @ManyToMany
+    private List<Loja> lojas;
+    
+     public Servico(String tipo) {
+        this.tipo = tipo;
+    }
 }

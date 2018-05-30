@@ -1,2 +1,4 @@
-CRUD DO PROJETO ATENDE MEU PET 
-ATUALIZAÇÃO 06/05/2018
+@Sistema de Petshop  - AtendeMeuPet!
+@Autor José Rafael Vieira Pinheiro
+@Data de publicação - May 30th 2018
+@Copyright 2018
