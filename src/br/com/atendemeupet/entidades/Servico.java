@@ -26,7 +26,7 @@ import lombok.ToString;
     @NamedQuery(query = "select s from Servico s where s.tipo = :pTipo", name = "ListarServicosTipo"),
     @NamedQuery(query = "select s from Servico s where s.id = :pId", name = "ListarServicosId"),
     @NamedQuery(query = "select distinct s from Servico s join fetch s.lojas l where l = :pLoja", name = "ListarServicosLoja"),
-    @NamedQuery(query = "select distinct s from Servico s join fetch s.lojas", name = "ListarServicosLojaGeral"),
+    @NamedQuery(query = "select distinct s from Servico s join fetch s.lojas order by s.id", name = "ListarServicosLojaGeral"),
     @NamedQuery(query = "select distinct s from Servico s join fetch s.reservas r where r = :pReserva", name = "ListarServicosReserva"),
 })
 @Entity
