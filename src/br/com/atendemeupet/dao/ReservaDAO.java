@@ -6,6 +6,7 @@
 package br.com.atendemeupet.dao;
 
 import br.com.atendemeupet.entidades.Loja;
+import br.com.atendemeupet.entidades.Pet;
 import br.com.atendemeupet.entidades.Reserva;
 import br.com.atendemeupet.entidades.Usuario;
 import java.util.List;
@@ -67,6 +68,16 @@ public class ReservaDAO {
         Query query = em.createNamedQuery("ListarReservasLoja");
 
         query.setParameter("pLoja", loja);
+
+        List<Reserva> reservas = query.getResultList();
+
+        return reservas;
+    }
+    
+    public List<Reserva> listarReservas(Pet pet) {
+        Query query = em.createNamedQuery("ListarReservasPet");
+
+        query.setParameter("pPet", pet);
 
         List<Reserva> reservas = query.getResultList();
 

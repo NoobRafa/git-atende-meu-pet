@@ -2,6 +2,7 @@ package br.com.atendemeupet.entidades;
 
 import java.util.Calendar;
 import java.util.List;
+import javax.persistence.CascadeType;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -28,6 +29,7 @@ import lombok.Setter;
     @NamedQuery(query = "select r from Reserva r where r.id = :pId", name = "ListarReservaId"),
     @NamedQuery(query = "select r from Reserva r where r.loja = :pLoja", name = "ListarReservasLoja"),
     @NamedQuery(query = "select distinct r from Reserva r where r.usuario = :pUsuario", name = "ListarReservasUsuario"),
+    @NamedQuery(query = "select distinct r from Reserva r where r.pet = :pPet", name = "ListarReservasPet")
 })
 @Entity
 public class Reserva {
@@ -44,7 +46,7 @@ public class Reserva {
     @JoinColumn(name = "loja_id")
     private Loja loja;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Pet pet;
 
     @ManyToMany

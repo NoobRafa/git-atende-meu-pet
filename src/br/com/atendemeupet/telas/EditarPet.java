@@ -6,8 +6,13 @@
 package br.com.atendemeupet.telas;
 
 import br.com.atendemeupet.dao.PetDAO;
+import br.com.atendemeupet.dao.ReservaDAO;
+import br.com.atendemeupet.dao.UsuarioDAO;
 import br.com.atendemeupet.entidades.Pet;
+import br.com.atendemeupet.entidades.Reserva;
+import br.com.atendemeupet.entidades.Usuario;
 import br.com.atendemeupet.modelos.PetTableModel;
+import br.com.atendemeupet.modelos.UsuarioTableModel;
 import br.com.atendemeupet.util.JpaUtil;
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -28,14 +33,18 @@ public class EditarPet extends javax.swing.JInternalFrame {
      */
     private static EditarPet editarPet;
 
-    private PetDAO dao = new PetDAO(JpaUtil.getEM());
-    private List<Pet> listaPets = dao.listarPets();
-    private PetTableModel modelo = new PetTableModel(listaPets);
+    private PetDAO pdao = new PetDAO(JpaUtil.getEM());
+    private UsuarioDAO udao = new UsuarioDAO(JpaUtil.getEM());
+    private List<Pet> listaPets = pdao.listarPets();
+    private PetTableModel modeloPet = new PetTableModel(listaPets);
+    private List<Usuario> listaUsuarios = udao.listarUsuariosPets();
+    private UsuarioTableModel modeloUsuario = new UsuarioTableModel(listaUsuarios);
+
     private NumberFormat formato = NumberFormat.getNumberInstance();
 
     private EditarPet() {
         initComponents();
-
+        tabelaPet.setVisible(false);
     }
 
     public static synchronized EditarPet getInstance() {
@@ -77,7 +86,7 @@ public class EditarPet extends javax.swing.JInternalFrame {
         alterar = new javax.swing.JButton();
         excluir = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tabela = new javax.swing.JTable();
+        tabelaPet = new javax.swing.JTable();
         nome = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -86,6 +95,12 @@ public class EditarPet extends javax.swing.JInternalFrame {
         formato.setMaximumIntegerDigits(3);
         formato.setMinimumIntegerDigits(2);
         idade = new JFormattedTextField(formato);
+        jLabel7 = new javax.swing.JLabel();
+        nomeUsuario = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        buscarUsuario = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tabelaUsuario = new javax.swing.JTable();
 
         setClosable(true);
         setTitle("Editar Pet");
@@ -107,10 +122,10 @@ public class EditarPet extends javax.swing.JInternalFrame {
             }
         });
 
-        tabela.setFont(new java.awt.Font("Trebuchet MS", 1, 12)); // NOI18N
-        tabela.setModel(modelo);
-        tabela.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(tabela);
+        tabelaPet.setFont(new java.awt.Font("Trebuchet MS", 1, 12)); // NOI18N
+        tabelaPet.setModel(modeloPet);
+        tabelaPet.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(tabelaPet);
 
         jLabel5.setFont(new java.awt.Font("Trebuchet MS", 1, 14)); // NOI18N
         jLabel5.setText("NOME:");
@@ -123,6 +138,30 @@ public class EditarPet extends javax.swing.JInternalFrame {
 
         idade.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
 
+        jLabel7.setFont(new java.awt.Font("Trebuchet MS", 1, 14)); // NOI18N
+        jLabel7.setText("PET:");
+
+        jLabel8.setFont(new java.awt.Font("Trebuchet MS", 1, 14)); // NOI18N
+        jLabel8.setText("USUÁRIO: ");
+
+        buscarUsuario.setFont(new java.awt.Font("Trebuchet MS", 1, 14)); // NOI18N
+        buscarUsuario.setText("BUSCAR");
+        buscarUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buscarUsuarioActionPerformed(evt);
+            }
+        });
+
+        tabelaUsuario.setFont(new java.awt.Font("Trebuchet MS", 1, 12)); // NOI18N
+        tabelaUsuario.setModel(modeloUsuario);
+        tabelaUsuario.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tabelaUsuario.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabelaUsuarioMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(tabelaUsuario);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -130,17 +169,14 @@ public class EditarPet extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(39, 39, 39)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(47, 47, 47)
+                                .addGap(86, 86, 86)
                                 .addComponent(alterar)
                                 .addGap(65, 65, 65)
                                 .addComponent(excluir))
                             .addGroup(layout.createSequentialGroup()
+                                .addGap(47, 47, 47)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(nome, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -151,15 +187,40 @@ public class EditarPet extends javax.swing.JInternalFrame {
                                 .addGap(56, 56, 56)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(idade, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel6))))))
+                                    .addComponent(jLabel6)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(19, 19, 19)
+                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(nomeUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(28, 28, 28)
+                                .addComponent(buscarUsuario))
+                            .addComponent(jScrollPane1))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(26, 26, 26)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(nomeUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(buscarUsuario))
+                    .addComponent(jLabel8))
+                .addGap(8, 8, 8)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(16, 16, 16)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -173,7 +234,7 @@ public class EditarPet extends javax.swing.JInternalFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(nome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(genero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(alterar)
                     .addComponent(excluir))
@@ -185,8 +246,21 @@ public class EditarPet extends javax.swing.JInternalFrame {
 
     private void excluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_excluirActionPerformed
         // TODO add your handling code here:
-        if (tabela.getSelectedRow() != -1 && !listaPets.isEmpty()) {
-            dao.removerPet(modelo.removeRow(tabela.getSelectedRow()));
+        if (tabelaPet.getSelectedRow() != -1 && !listaPets.isEmpty()) {
+            Pet modificado = modeloPet.getRow(tabelaPet.getSelectedRow());
+
+            ReservaDAO rdao = new ReservaDAO(JpaUtil.getEM());
+
+            List<Reserva> reservas = rdao.listarReservas(modificado);
+
+            if (reservas != null) {
+                reservas.forEach((reserva) -> {
+                    rdao.removerReserva(reserva);
+                });
+            }
+            pdao.removerPet(modificado);
+            modeloPet.removeRow(tabelaPet.getSelectedRow());
+            
             JOptionPane.showMessageDialog(null, "Exclusão realizada com sucesso!");
         } else {
             JOptionPane.showMessageDialog(null, "Nenhum Pet cadastrado!");
@@ -197,14 +271,13 @@ public class EditarPet extends javax.swing.JInternalFrame {
     private void alterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alterarActionPerformed
         // TODO add your handling code here:
 
-        if (tabela.getSelectedRow() != -1 && !listaPets.isEmpty()) {
+        if (tabelaPet.getSelectedRow() != -1 && !listaPets.isEmpty()) {
             boolean verificar = false;
-            Pet modificado;
-            modificado = listaPets.get(tabela.getSelectedRow());
+            Pet modificado = modeloPet.getRow(tabelaPet.getSelectedRow());
 
             if (!nome.getText().isEmpty()) {
                 modificado.setNome(nome.getText());
-                modelo.setValueAt(nome.getText(), tabela.getSelectedRow(), 1);
+                modeloPet.setValueAt(nome.getText(), tabelaPet.getSelectedRow(), 1);
                 verificar = true;
 
             }
@@ -212,19 +285,19 @@ public class EditarPet extends javax.swing.JInternalFrame {
             if (idade.getValue() != null) {
                 int idd = ((Number) idade.getValue()).intValue();
                 modificado.setIdade(idd);
-                modelo.setValueAt(idd, tabela.getSelectedRow(), 2);
+                modeloPet.setValueAt(idd, tabelaPet.getSelectedRow(), 2);
                 verificar = true;
             }
 
             if (!genero.getText().isEmpty()) {
                 modificado.setGenero(genero.getText());
-                modelo.setValueAt(genero.getText(), tabela.getSelectedRow(), 3);
+                modeloPet.setValueAt(genero.getText(), tabelaPet.getSelectedRow(), 3);
                 verificar = true;
 
             }
 
             if (verificar) {
-                dao.atualizarPet(modificado);
+                pdao.atualizarPet(modificado);
                 limpar(Arrays.asList(nome, genero, idade));
                 JOptionPane.showMessageDialog(null, "Alteração(ões) realizada(s) com sucesso !");
 
@@ -238,18 +311,56 @@ public class EditarPet extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_alterarActionPerformed
 
+    private void buscarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarUsuarioActionPerformed
+        // TODO add your handling code here:
+        if (!nomeUsuario.getText().isEmpty()) {
+            List<Usuario> aux = udao.listarUsuarios(nomeUsuario.getText());
+
+            if (!aux.isEmpty()) {
+                modeloUsuario = new UsuarioTableModel(aux);
+                tabelaUsuario.setModel(modeloUsuario);
+            } else {
+                JOptionPane.showMessageDialog(null, "Usuario " + nomeUsuario.getText() + " não foi encontrado!");
+                nomeUsuario.setText(null);
+            }
+
+        } else {
+            JOptionPane.showMessageDialog(null, "Verifique o campo antes de tentar realizar uma busca!");
+        }
+    }//GEN-LAST:event_buscarUsuarioActionPerformed
+
+    private void tabelaUsuarioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelaUsuarioMouseClicked
+        // TODO add your handling code here:
+        if (tabelaUsuario.getSelectedRow() != -1) {
+            Usuario usr = modeloUsuario.getRow(tabelaUsuario.getSelectedRow());
+            modeloPet = new PetTableModel(usr.getPets());
+            tabelaPet.setModel(modeloPet);
+
+            if (!tabelaPet.isVisible()) {
+                tabelaPet.setVisible(true);
+            }
+
+        }
+    }//GEN-LAST:event_tabelaUsuarioMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton alterar;
+    private javax.swing.JButton buscarUsuario;
     private javax.swing.JButton excluir;
     private javax.swing.JTextField genero;
     private javax.swing.JFormattedTextField idade;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField nome;
-    private javax.swing.JTable tabela;
+    private javax.swing.JTextField nomeUsuario;
+    private javax.swing.JTable tabelaPet;
+    private javax.swing.JTable tabelaUsuario;
     // End of variables declaration//GEN-END:variables
 
 }
